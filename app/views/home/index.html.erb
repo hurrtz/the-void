@@ -1,0 +1,79 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-4">
+      <h1><a href="">The Void</a></h1>
+
+      <p class="lead">
+        Der Weltraum. Flotten, Planeten, Technologien. Spieler bezwingen.
+        <br />
+        Nur diesmal: Richtig!
+      </p>
+
+      <%= debug params %>
+
+      <% flash.each do |name, msg| -%>
+          <%= content_tag :div, msg, class: 'alert alert-' + name.to_s %>
+      <% end -%>
+
+      <% if @user %>
+          <%= debug @user %>
+      <% end %>
+
+      <hr />
+
+      <p><a href="#home-login" data-toggle="collapse">Login</a></p>
+
+      <form role="form" action="/home/index" method="post" id="home-login" class="collapse out">
+        <div class="form-group">
+          <div class="input-group">
+                        <span class="input-group-btn">
+                            <input type="submit" class="btn btn-primary" name="login" value="Login" />
+                        </span>
+
+            <input type="text" class="form-control" name="authentication" value="" />
+          </div>
+        </div>
+
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="remember" value="1"> eingeloggt bleiben
+          </label>
+        </div>
+
+        <input type="hidden" name="authenticity_token" value="" />
+      </form>
+
+      <p><a href="#home-register" data-toggle="collapse">Registrieren</a></p>
+
+      <form role="form" action="/home/index" method="post" id="home-register" class="collapse in">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Spielername" value="hurrtz" name="nick" />
+        </div>
+
+        <div class="form-group">
+          <input type="email" class="form-control" placeholder="E-Mail" value="info@hurrtz.de" name="email" />
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn btn-primary">registrieren</button>
+        </div>
+
+        <input type="hidden" name="authenticity_token" value="" />
+      </form>
+
+      <p><a href="">Über das Spiel</a></p>
+      <p><a href="">Wiki</a></p>
+
+      <hr />
+
+      <p><a href="">Impressum</a></p>
+      <p><a href="">Datenschutz</a></p>
+
+      <hr />
+    </div>
+
+    <div class="col-md-8">
+      <img class="img-responsive img-rounded img-front" src="/images/front.jpg" alt="" />
+    </div>
+  </div>
+</div>
