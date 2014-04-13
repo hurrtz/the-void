@@ -1,2 +1,8 @@
 <h1>Local#overview</h1>
 <p>Find me in app/views/local/overview.html.erb</p>
+
+<%= debug params %>
+
+<% flash.each do |name, msg| -%>
+    <%= content_tag :div, msg, class: 'alert alert-' + name.to_s %>
+<% end -%>

@@ -1,9 +1,17 @@
 TheVoid::Application.routes.draw do
-  get "local/overview"
-  get "local/fleet"
-  get "local/robotics"
-  get "local/research"
-  get "local/structures"
+  root 'home#index'
+
+  get 'home/index'
+  post 'local/overview'
+
+  post 'home/index'
+
+  get 'local/overview'
+  get 'local/fleet'
+  get 'local/robotics'
+  get 'local/research'
+  get 'local/structures'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

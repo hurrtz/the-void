@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    </head>
+
+    <body>
+        <h1>the-void</h1>
+        <h2>Registrierung</h2>
+        <p>Du hast dich auf the-void.com angemeldet. Bitte klicke auf den folgenden Link, um den Registrierungsprozess abzuschließen:</p>
+        <p><a href="http://localhost:3000?activate=<%=@user.activatekey%>">http://the-void.de?activate=<%=@user.activatekey%></a></p>
+        <p></p>
+        <p>
+          Bei the-void gibt es keine Login über Benutzernamen und Passwort. Es gibt nur einen Zugangscode, den sich niemand jemals merken können wird:<br />
+          <br />
+          <b><%= @user.authentification%></b><br />
+          <br />
+          Aus Gründen der Sicherheit wird sich das auch nie ändern. Kein selbst ausgedachtes Passwort wird jemals besser sein, als dieses. Wer mir nicht glaubt: Das Passwort ist 64 Zeichen lang und jedes Zeichen kann 128 Kombinationen tragen. Selber rechnen und staunen macht schlank :)
+        </p>
+        <p>Da der Login ausschließlich über diesen Code möglich ist, dient die einzige Möglichkeit, vergessene Logins wieder herzustellen, über die Eingabe der korrekten E-Mail-Adresse. Wenn irgendwann weder Login noch E-Mail-Adresse vorhanden sind, ist der Account weg. Sorry.</p>
+        <p>Viel Spaß beim Zocken!</p>
+    </body>
+</html>
