@@ -1,53 +1,77 @@
 class HomeController < ApplicationController
   def index
-    if params && params[:nick] && params[:email]
+    if params[:button] == 'register'
       _errors = []
 
       # check for submitted nick
       _errors.push('Bitte geben Sie einen Benutzernamen ein!') if params[:nick].empty?
 
+      # check for submitted email
+      _errors.push('Bitte geben Sie eine E-Mail-Adresse ein!') if params[:email].empty?
+
       # check for correct email
-      _errors.push('Bitte geben Sie eine gültige E-Mail-Adresse ein!') if (params[:email] !~ %r{^.+?@.+?\..{2,5}$}xi)
+      _errors.push('Bitte geben Sie eine gültige E-Mail-Adresse ein!') if (params[:email] !~ %r{^.+@.+\..+$}xi)
+
+      # check if email is already taken
+      _errors.push('Die E-Mail-Adresse ist bereits vergeben.') if (User.where('email = ?', params[:email]).any?)
 
       if _errors.length > 0
         redirect_to '/', :flash => {:danger => _errors.join(' ')}
       else
+        _password = Password::make
+        Rails.logger.debug '===================='
+        Rails.logger.debug 'neu erstelltes Originalpasswort'
+        Rails.logger.debug _password
+        Rails.logger.debug '===================='
         @user = User.new
-        @user.first_fill(params[:nick], params[:email])
+        @user.first_fill(params[:nick], params[:email], Password::encrypt(_password))
 
         if @user.save
-          UserMailer.activate_email(@user).deliver
+          UserMailer.activate_email(@user, _password).deliver
           redirect_to '/', :flash => {:success => 'Erster Schritt der Registrierung erfolgreich. Ihnen wurde eine E-Mail mit den Zugangsdaten zugesandt. Bitte schließen den Registrierungsprozess ab, indem Sie über den in der E-Mail enthaltenen Link die Gültigkeit Ihrer E-Mail-Adresse bestätigen.'}
         else
           redirect_to '/', :flash => {:danger => 'Bei der Registrierung ist ein Fehler aufgetreten. Sollte der Fehler weiterhin bestehen, wenden Sie sich bitte an the-void.'}
         end
       end
-    elsif params && (params[:login] || params[:activate])
+    elsif params[:button] == 'login' || params[:activate]
       # User hat auf den Aktivierungslink geklickt
       if params[:activate]
-        user = User.where(activatekey: params[:activate])
+        user = User.find_by_activatekey(params[:activate])
 
-        if user.any?
-          user = user.take!
-          user.update_attributes(activatekey: '', active: true, firstlogin: DateTime.now, lastlogin: DateTime.now)
+        if user
+          user.update_attributes(activatekey: '', active: true, loginfirst: DateTime.now, loginrecent: DateTime.now)
+
+          cookies.signed[:user] = user.id
+          cookies.signed[:password] = Password::encrypt(user.password)
+
           redirect_to '/local/overview', :flash => {:success => 'Gratulation! Die Registrierung ist abgeschlossen. Viel Spaß bei the-void!'}
         else
-          redirect_to '/', :flash => {:danger=> 'Da hat etwas nicht geklappt... Der Aktivierungskey kann nicht in der Datenbank gefunden werden.'}
+          redirect_to '/', :flash => {:danger => 'Da hat etwas nicht geklappt... Der Aktivierungskey kann nicht in der Datenbank gefunden werden.'}
         end
       end
 
-      if params[:remember] == '1'
-        cookies.permanent[:nick] = :nick
-        cookies.permanent[:email] = :email
-      end
-
-      if params[:login] && params[:authentication]
-        user = User.where("authentification = ? AND active = ?", params[:authentication], true)
+      # Login
+      if params[:button] == 'login'
+        user = User.where('email = ? AND active = ?', params[:email], true)
 
         if user.any?
           user = user.take!
-          user.update_attributes(lastlogin: DateTime.now)
-          redirect_to '/local/overview'
+
+          if Password::is_correct?(user.password, params[:password])
+            user.update_attributes(loginrecent: DateTime.now)
+
+            if params[:remember] == '1'
+              cookies.permanent.signed[:user] = user.id
+              cookies.permanent.signed[:password] = user.password
+            else
+              cookies.signed[:user] = user.id
+              cookies.signed[:password] = user.password
+            end
+
+            redirect_to '/local/overview'
+          else
+            redirect_to '/', :flash => {:danger=> 'Login nicht möglich.'}
+          end
         else
           redirect_to '/', :flash => {:danger=> 'Login nicht möglich.'}
         end

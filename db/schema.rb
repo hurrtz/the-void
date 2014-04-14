@@ -11,16 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140413064400) do
+ActiveRecord::Schema.define(version: 20140411081308) do
 
   create_table "planets", force: true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "registerlist", force: true do |t|
-    t.integer "userid"
-    t.string  "registercode"
   end
 
   create_table "systems", force: true do |t|
@@ -29,14 +24,21 @@ ActiveRecord::Schema.define(version: 20140413064400) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "authentification", null: false
-    t.string   "nick",             null: false
-    t.string   "email",            null: false
-    t.boolean  "active",           null: false
-    t.datetime "firstlogin"
-    t.datetime "lastlogin"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at"
+    t.string   "nick",        limit: 512, null: false
+    t.string   "onick",       limit: 500, null: false
+    t.text     "password",    limit: 128, null: false
+    t.string   "email",       limit: 512
+    t.text     "activatekey", limit: 32,  null: false
+    t.boolean  "active",                  null: false
+    t.datetime "loginrecent"
+    t.datetime "loginfirst"
+    t.datetime "created"
   end
+
+  add_index "users", ["active"], name: "index_users_on_active"
+  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["nick"], name: "index_users_on_nick", unique: true
+  add_index "users", ["onick"], name: "index_users_on_onick"
+  add_index "users", ["password"], name: "index_users_on_password", unique: true
 
 end

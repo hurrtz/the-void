@@ -9,15 +9,11 @@
         Nur diesmal: Richtig!
       </p>
 
-      <%= debug params %>
-
       <% flash.each do |name, msg| -%>
           <%= content_tag :div, msg, class: 'alert alert-' + name.to_s %>
       <% end -%>
 
-      <% if @user %>
-          <%= debug @user %>
-      <% end %>
+      <%= debug params %>
 
       <hr />
 
@@ -25,19 +21,23 @@
 
       <form role="form" action="/home/index" method="post" id="home-login" class="collapse out">
         <div class="form-group">
-          <div class="input-group">
-                        <span class="input-group-btn">
-                            <input type="submit" class="btn btn-primary" name="login" value="Login" />
-                        </span>
-
-            <input type="text" class="form-control" name="authentication" value="" />
-          </div>
+          <input type="text" class="form-control" name="email" value="" placeholder="E-Mail" />
         </div>
 
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="remember" value="1"> eingeloggt bleiben
-          </label>
+        <div class="form-group">
+          <input type="text" class="form-control" name="password" placeholder="Passwort" value="" />
+        </div>
+
+        <div class="form-group">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="remember" value="1"> eingeloggt bleiben
+              </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" name="button" value="login" class="btn btn-primary">einloggen</button>
         </div>
 
         <input type="hidden" name="authenticity_token" value="" />
@@ -45,17 +45,17 @@
 
       <p><a href="#home-register" data-toggle="collapse">Registrieren</a></p>
 
-      <form role="form" action="/home/index" method="post" id="home-register" class="collapse in">
+      <form role="form" action="/home/index" method="post" id="home-register" class="collapse out">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Spielername" value="hurrtz" name="nick" />
+          <input type="text" class="form-control" placeholder="Spielername" value="" name="nick" />
         </div>
 
         <div class="form-group">
-          <input type="email" class="form-control" placeholder="E-Mail" value="info@hurrtz.de" name="email" />
+          <input type="email" class="form-control" placeholder="E-Mail" value="" name="email" />
         </div>
 
         <div class="form-group">
-          <button type="submit" class="btn btn-primary">registrieren</button>
+          <button type="submit" name="button" value="register" class="btn btn-primary">registrieren</button>
         </div>
 
         <input type="hidden" name="authenticity_token" value="" />
