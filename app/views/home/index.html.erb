@@ -21,23 +21,31 @@
 
       <form role="form" action="/home/index" method="post" id="home-login" class="collapse out">
         <div class="form-group">
-          <input type="text" class="form-control" name="email" value="" placeholder="E-Mail" />
+          <input type="text" id="login_email" class="form-control" name="email" value="" placeholder="E-Mail" />
         </div>
 
         <div class="form-group">
-          <input type="text" class="form-control" name="password" placeholder="Passwort" value="" />
+          <input type="text" id="login_password" class="form-control" name="password" placeholder="Passwort" value="" />
         </div>
 
         <div class="form-group">
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="remember" value="1"> eingeloggt bleiben
+                <input id="login_permanent" type="checkbox" name="remember" value="1"> eingeloggt bleiben
               </label>
+
+              <a class="pull-right" id="passwort_reset" href="javascript:void(0);">Passwort vergessen?</a>
+              <input type="hidden" name="forgotten" id="login_new_password" value="" />
             </div>
         </div>
 
+        <div id="new_password_info_box" class="alert alert-info hidden">
+          <span class="glyphicon glyphicon-hand-right"></span>
+          Um Ihr Passwort zurückzusetzen, geben Sie bitte die E-Mail-Adresse ein, unter der Sie sich angemeldet haben. Drücken Sie anschließend auf den Button "Passwort anfordern". Ein neues Passwort wird Ihnen dann zugesandt.
+        </div>
+
         <div class="form-group">
-          <button type="submit" name="button" value="login" class="btn btn-primary">einloggen</button>
+          <button id="login_button" type="submit" name="button" value="login" class="btn btn-primary">einloggen</button>
         </div>
 
         <input type="hidden" name="authenticity_token" value="" />

@@ -44,7 +44,7 @@ class HomeController < ApplicationController
           cookies.signed[:user] = user.id
           cookies.signed[:password] = Password::encrypt(user.password)
 
-          redirect_to '/local/overview', :flash => {:success => 'Gratulation! Die Registrierung ist abgeschlossen. Viel Spaß bei the-void!'}
+          redirect_to '/local/overview', :flash => {:success => 'Gratulation! Das Spielerkonto ist nun aktiv! Viel Spaß bei the-void!'}
         else
           redirect_to '/', :flash => {:danger => 'Da hat etwas nicht geklappt... Der Aktivierungskey kann nicht in der Datenbank gefunden werden.'}
         end
@@ -52,28 +52,49 @@ class HomeController < ApplicationController
 
       # Login
       if params[:button] == 'login'
-        user = User.where('email = ? AND active = ?', params[:email], true)
+        # if the user needs a new password
+        if params[:forgotten] == '1'
+          user = User.where('email = ?', params[:email])
 
-        if user.any?
-          user = user.take!
+          if user.any?
+            user = user.take
+            _password = Password::make
+            user.password = Password::encrypt(_password)
+            user.update_attributes(password: Password::encrypt(_password), active: false, activatekey: user.make_activation_code)
+            user.reload
 
-          if Password::is_correct?(user.password, params[:password])
-            user.update_attributes(loginrecent: DateTime.now)
-
-            if params[:remember] == '1'
-              cookies.permanent.signed[:user] = user.id
-              cookies.permanent.signed[:password] = user.password
-            else
-              cookies.signed[:user] = user.id
-              cookies.signed[:password] = user.password
+            if user.save
+              UserMailer.new_password(user, _password).deliver
+              redirect_to '/', :flash => {:success => 'Ihr Passwort wurde zurückgesetzt und Ihnen erneut zugesandt. Bitte aktivieren Sie Ihr Konto über die E-Mail erneut.'}
             end
 
-            redirect_to '/local/overview'
+          else
+            redirect_to '/', :flash => {:danger=> 'E-Mail-Adresse nicht bekannt.'}
+          end
+        else
+          user = User.where('email = ? AND active = ?', params[:email], true)
+
+          if user.any?
+            user = user.take
+
+            if Password::is_correct?(user.password, params[:password])
+              user.update_attributes(loginrecent: DateTime.now)
+
+              if params[:remember] == '1'
+                cookies.permanent.signed[:user] = user.id
+                cookies.permanent.signed[:password] = user.password
+              else
+                cookies.signed[:user] = user.id
+                cookies.signed[:password] = user.password
+              end
+
+              redirect_to '/local/overview'
+            else
+              redirect_to '/', :flash => {:danger=> 'Login nicht möglich.'}
+            end
           else
             redirect_to '/', :flash => {:danger=> 'Login nicht möglich.'}
           end
-        else
-          redirect_to '/', :flash => {:danger=> 'Login nicht möglich.'}
         end
       end
     end

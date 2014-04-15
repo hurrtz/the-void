@@ -8,4 +8,12 @@ class UserMailer < ActionMailer::Base
 
     mail(to: @user.email, subject: 'Registrierung auf the-void.de')
   end
+
+  def new_password(user, password)
+    @user = user
+    @key  = @user.activatekey
+    @password = password
+
+    mail(to: @user.email, subject: 'neues Passwort the-void.de')
+  end
 end

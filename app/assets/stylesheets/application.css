@@ -13,3 +13,13 @@
  *= require home
  *= require users
  */
+
+/* extension of the normal bootstrap alert boxes: now with headlines! */
+.alert.alert-info .alert-headline {
+    border-bottom: 1px solid #A8D0D8;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.alert .glyphicon {padding-right: 8px;}
